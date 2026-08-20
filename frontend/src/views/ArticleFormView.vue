@@ -6,9 +6,19 @@
             </v-card-title>
 
             <v-card-text>
-                <v-text-field v-model="title" label="Название" />
+                <v-form ref="form">
+                    <v-text-field 
+                        v-model="title" 
+                        label="Название"
+                        :rules="[required]"
+                    />
 
-                <v-textarea v-model="text" label="Текст статьи" />
+                    <v-textarea 
+                        v-model="text" 
+                        label="Текст статьи" 
+                        :rules="[required]"
+                    />
+                </v-form>
             </v-card-text>
 
             <v-card-actions>
@@ -39,26 +49,45 @@ const text = ref('');
 
 const isEdit = computed(() => Boolean(route.params.id));
 
+const form = ref(null);
+
+const required = (value) => {
+    return Boolean(value?.trim()) || 'Поле обязательно';
+};
+
 const save = async () => {
+
+    const { valid } = await form.value.validate();
+
+    if (!valid) {
+        return;
+    }
+
     const article = {
         title: title.value,
         text: text.value
     };
 
+    let savedArticle;
+
     if (isEdit.value) {
-        await store.dispatch('updateArticle', {
+        savedArticle = await store.dispatch('updateArticle', {
             id: route.params.id,
             article
         });
     } else {
-        await store.dispatch('createArticle', article);
+        savedArticle = await store.dispatch('createArticle', article);
     }
 
-    router.push('/articles');
+    router.push(`/articles/${savedArticle.id}`);
 };
 
 const cancel = () => {
-    router.push('/articles');
+    if (isEdit.value) {
+        router.push(`/articles/${route.params.id}`);
+    } else {
+        router.push('/articles');
+    }
 };
 
 onMounted(async () => {

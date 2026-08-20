@@ -35,8 +35,12 @@ const store = createStore({
 
         async fetchArticle(_, id) {
             const responce = await api.get(`/article/${id}/`);
-            
+
             return responce.data;
+        },
+
+        async deleteArticle(_, id) {
+            await api.delete(`/article/${id}/`);
         }
     }
 });

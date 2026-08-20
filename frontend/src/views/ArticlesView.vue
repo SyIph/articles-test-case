@@ -10,9 +10,12 @@
             </v-card-actions>
 
             <v-data-table :headers="headers" :items="articles">
+                <template #item.createdAt="{ item }">
+                    {{ formatDate(item.createdAt) }}
+                </template>
                 <template #item.actions="{ item }">
-                    <v-btn size="small" :to="`/articles/${item.id}/edit`">
-                        Редактировать
+                    <v-btn size="small" :to="`/articles/${item.id}`">
+                        Просмотреть
                     </v-btn>
                 </template>
             </v-data-table>
@@ -51,5 +54,9 @@ const articles = computed(() => store.state.articles);
 onMounted(() => {
     store.dispatch('fetchArticles');
 });
+
+const formatDate = (date) => {
+    return new Date(date).toLocaleString();
+}
 
 </script>

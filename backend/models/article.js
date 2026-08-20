@@ -13,11 +13,17 @@ module.exports = (sequelize) => {
         {
             title: {
                 type: DataTypes.STRING,
-                allowNull: false
+                allowNull: false,
+                validate: {
+                    notEmpty: true
+                }
             },
             text: {
                 type: DataTypes.TEXT,
-                allowNull: false
+                allowNull: false,
+                validate: {
+                    notEmpty: true
+                }
             }
         },
         {
