@@ -1,30 +1,30 @@
 const { Model, DataTypes } = require('sequelize');
 
 module.exports = (sequelize) => {
-    class Article extends Model {
+    class Comment extends Model  {
         static associate(models) {
-            Article.hasMany(models.Comment, {
+            Comment.belongsTo(models.Article, {
                 foreignKey: 'articleId'
             });
         }
     }
 
-    Article.init(
+    Comment.init(
         {
-            title: {
-                type: DataTypes.STRING,
-                allowNull: false
-            },
             text: {
                 type: DataTypes.TEXT,
+                allowNull: false
+            },
+            articleId: {
+                type: DataTypes.INTEGER,
                 allowNull: false
             }
         },
         {
             sequelize,
-            modelName: 'Article'
+            modelName: 'Comment'
         }
     );
 
-    return Article;
+    return Comment;
 };
