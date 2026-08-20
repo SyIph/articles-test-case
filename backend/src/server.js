@@ -1,6 +1,7 @@
 const express = require('express');
 const { Article, Comment } = require('../models');
-const { asyncHandler, errorHandler, findOrFail } = require('./helpers');
+const { asyncHandler, errorHandler, findOrFail, findWhereOrFail } = require('./helpers');
+const { Op } = require('sequelize');
 
 const PORT = 3000;
 
@@ -66,10 +67,10 @@ app.post('/article/:articleId/comment/', asyncHandler(async (req, res) => {
 app.get('/article/:articleId/comment/:commentId/', asyncHandler(async (req, res) => {
     const article = await findOrFail(Article, req.params.articleId, 'Article');
 
-    const comment = await findOrFail(Comment, {
+    const comment = await findWhereOrFail(Comment, {
         id: req.params.commentId,
         articleId: article.id
-    }, 'Comment', true);
+    }, 'Comment');
 
     return res.json(comment);
 }));
@@ -84,6 +85,34 @@ app.get('/article/:articleId/comments/', asyncHandler(async (req, res) => {
     });
 
     return res.json(comments);
+}));
+
+app.patch('/article/:articleId/comment/:commentId/', asyncHandler(async (req, res) => {
+    const article = await findOrFail(Article, req.params.articleId, 'Article');
+    
+    const comment = await findWhereOrFail(Comment, {
+        id: req.params.commentId,
+        articleId: article.id
+    }, 'Comment');
+
+    await comment.update({
+        text: req.body.text ?? comment.text
+    });
+
+    return res.json(comment);
+}));
+
+app.delete('/article/:articleId/comment/:commentId/', asyncHandler(async (req, res) => {
+    const article = await findOrFail(Article, req.params.articleId, 'Article');
+    
+    const comment = await findWhereOrFail(Comment, {
+        id: req.params.commentId,
+        articleId: article.id
+    }, 'Comment');
+
+    await comment.destroy();
+
+    return res.status(204).send();
 }));
 
 

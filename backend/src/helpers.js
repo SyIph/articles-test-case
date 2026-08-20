@@ -14,15 +14,8 @@ const errorHandler = (error, req, res, next) => {
     });
 };
 
-const findOrFail = async (model, param, targetName = 'Target', doWhere = false) => {
-    var target = null;
-    if (!doWhere) {
-        target = await model.findByPk(param)
-    } else {
-        target = await model.findOne({ 
-            where: param 
-        });
-    }
+const findOrFail = async (model, id, targetName = 'Target') => {
+    const target = await model.findByPk(id)
 
     if (!target) {
         const error = new Error(`${targetName} not found`);
@@ -33,4 +26,18 @@ const findOrFail = async (model, param, targetName = 'Target', doWhere = false) 
     return target;
 };
 
-module.exports = {asyncHandler, errorHandler, findOrFail};
+const findWhereOrFail = async (model, condition, targetName = 'Target') => {
+    const target = await model.findOne({ 
+        where: condition 
+    });
+
+    if (!target) {
+        const error = new Error(`${targetName} not found`);
+        error.status = 404;
+        throw error;
+    }
+
+    return target;
+};
+
+module.exports = {asyncHandler, errorHandler, findOrFail, findWhereOrFail};
