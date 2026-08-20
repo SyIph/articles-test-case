@@ -1,27 +1,12 @@
 const express = require('express');
 const { Article } = require('../models');
+const { asyncHandler, errorHandler, findOrFail } = require('./helpers');
 
 const PORT = 3000;
 
 const app = express();
 
 app.use(express.json());
-
-const asyncHandler = (handler) => {
-    return async (req, res, next) => {
-        try {
-            await handler(req, res, next);
-        } catch (error) {
-            next(error);
-        }
-    }
-};
-
-const errorHandler = (error, req, res, next) => {
-    res.status(500).json({ 
-        error: error.message
-    });
-};
 
 app.use(errorHandler);
 
@@ -37,13 +22,7 @@ app.post('/article/', asyncHandler(async (req, res) => {
 }));
 
 app.get('/article/:id/', asyncHandler(async (req, res) => {
-    const article = await Article.findByPk(req.params.id);
-
-    if (!article) {
-        return res.status(404).json({
-            error: 'Article not found'
-        });
-    }
+    const article = await findOrFail(Article, req.params.id, 'Article');
 
     return res.json(article);
 }));
@@ -52,6 +31,25 @@ app.get('/articles/', asyncHandler(async (req, res) => {
     const articles = await Article.findAll();
 
     return res.json(articles);
+}));
+
+app.patch('/article/:id/', asyncHandler(async (req, res) => {
+    const article = await findOrFail(Article, req.params.id, 'Article');
+
+    await article.update({
+        title: req.body.title ?? article.title,
+        text: req.body.text ?? article.text
+    });
+
+    return res.json(article);
+}));
+
+app.delete('/article/:id/', asyncHandler(async (req, res) => {
+    const article = await findOrFail(Article, req.params.id, 'Article');
+
+    await article.destroy();
+
+    return res.status(204).send();
 }));
 
 
