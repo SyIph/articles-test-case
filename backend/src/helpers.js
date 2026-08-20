@@ -9,13 +9,20 @@ const asyncHandler = (handler) => {
 };
 
 const errorHandler = (error, req, res, next) => {
-    res.status(500).json({ 
+    res.status(error.status || 500).json({ 
         error: error.message
     });
 };
 
-const findOrFail = async (model, id, targetName = 'Target') => {
-    const target = await model.findByPk(id);
+const findOrFail = async (model, param, targetName = 'Target', doWhere = false) => {
+    var target = null;
+    if (!doWhere) {
+        target = await model.findByPk(param)
+    } else {
+        target = await model.findOne({ 
+            where: param 
+        });
+    }
 
     if (!target) {
         const error = new Error(`${targetName} not found`);

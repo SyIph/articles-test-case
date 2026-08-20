@@ -1,5 +1,5 @@
 const express = require('express');
-const { Article } = require('../models');
+const { Article, Comment } = require('../models');
 const { asyncHandler, errorHandler, findOrFail } = require('./helpers');
 
 const PORT = 3000;
@@ -7,8 +7,6 @@ const PORT = 3000;
 const app = express();
 
 app.use(express.json());
-
-app.use(errorHandler);
 
 
 
@@ -18,11 +16,11 @@ app.post('/article/', asyncHandler(async (req, res) => {
         text: req.body.text
     });
 
-    return res.status(200).json(article);
+    return res.status(201).json(article);
 }));
 
-app.get('/article/:id/', asyncHandler(async (req, res) => {
-    const article = await findOrFail(Article, req.params.id, 'Article');
+app.get('/article/:articleId/', asyncHandler(async (req, res) => {
+    const article = await findOrFail(Article, req.params.articleId, 'Article');
 
     return res.json(article);
 }));
@@ -33,8 +31,8 @@ app.get('/articles/', asyncHandler(async (req, res) => {
     return res.json(articles);
 }));
 
-app.patch('/article/:id/', asyncHandler(async (req, res) => {
-    const article = await findOrFail(Article, req.params.id, 'Article');
+app.patch('/article/:articleId/', asyncHandler(async (req, res) => {
+    const article = await findOrFail(Article, req.params.articleId, 'Article');
 
     await article.update({
         title: req.body.title ?? article.title,
@@ -44,8 +42,8 @@ app.patch('/article/:id/', asyncHandler(async (req, res) => {
     return res.json(article);
 }));
 
-app.delete('/article/:id/', asyncHandler(async (req, res) => {
-    const article = await findOrFail(Article, req.params.id, 'Article');
+app.delete('/article/:articleId/', asyncHandler(async (req, res) => {
+    const article = await findOrFail(Article, req.params.articleId, 'Article');
 
     await article.destroy();
 
@@ -53,6 +51,44 @@ app.delete('/article/:id/', asyncHandler(async (req, res) => {
 }));
 
 
+
+app.post('/article/:articleId/comment/', asyncHandler(async (req, res) => {
+    const article = await findOrFail(Article, req.params.articleId, 'Article');
+
+    const comment = await Comment.create({
+        text: req.body.text,
+        articleId: article.id
+    });
+
+    return res.status(201).json(comment);
+}));
+
+app.get('/article/:articleId/comment/:commentId/', asyncHandler(async (req, res) => {
+    const article = await findOrFail(Article, req.params.articleId, 'Article');
+
+    const comment = await findOrFail(Comment, {
+        id: req.params.commentId,
+        articleId: article.id
+    }, 'Comment', true);
+
+    return res.json(comment);
+}));
+
+app.get('/article/:articleId/comments/', asyncHandler(async (req, res) => {
+    const article = await findOrFail(Article, req.params.articleId, 'Article');
+    
+    const comments = await Comment.findAll({
+        where: {
+            articleId: article.id
+        }
+    });
+
+    return res.json(comments);
+}));
+
+
+
+app.use(errorHandler);
 
 app.listen(PORT, () => {
     console.log(`Server is running on port ${PORT}`);
