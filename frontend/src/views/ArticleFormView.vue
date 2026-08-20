@@ -15,6 +15,10 @@
                 <v-btn color="primary" @click="save">
                     Сохранить
                 </v-btn>
+
+                <v-btn variant="text" @click="cancel">
+                    Отмена
+                </v-btn>
             </v-card-actions>
         </v-card>
     </v-container>
@@ -22,6 +26,7 @@
 
 <script setup>
 
+import { computed, onMounted, ref } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import { useStore } from 'vuex';
 
@@ -51,5 +56,23 @@ const save = async () => {
 
     router.push('/articles');
 };
+
+const cancel = () => {
+    router.push('/articles');
+};
+
+onMounted(async () => {
+    if (!isEdit.value) {
+        return;
+    }
+
+    const article = await store.dispatch(
+        'fetchArticle',
+        route.params.id
+    );
+
+    title.value = article.title;
+    text.value = article.text;
+});
 
 </script>

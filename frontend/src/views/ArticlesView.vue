@@ -3,7 +3,19 @@
         <v-card>
             <v-card-title>Статьи</v-card-title>
 
-            <v-data-table :headers="headers" :items="articles"/>
+            <v-card-actions>
+                <v-btn color="primary" to="/articles/new">
+                    Добавить статью
+                </v-btn>
+            </v-card-actions>
+
+            <v-data-table :headers="headers" :items="articles">
+                <template #item.actions="{ item }">
+                    <v-btn size="small" :to="`/articles/${item.id}/edit`">
+                        Редактировать
+                    </v-btn>
+                </template>
+            </v-data-table>
         </v-card>
     </v-container>
 </template>
@@ -26,6 +38,11 @@ const headers = [
     {
         title: 'Дата создания',
         key: 'createdAt'
+    },
+    {
+        title: 'Действия',
+        key: 'actions',
+        sortable: false
     }
 ];
 

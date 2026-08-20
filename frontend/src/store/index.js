@@ -31,6 +31,12 @@ const store = createStore({
             const responce = await api.patch(`/article/${id}`, article);
 
             return responce.data;
+        },
+
+        async fetchArticle(_, id) {
+            const responce = await api.get(`/article/${id}/`);
+            
+            return responce.data;
         }
     }
 });
