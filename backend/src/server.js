@@ -1,6 +1,5 @@
 const express = require('express');
-const { Article } = require('../models');
-const { asyncHandler, errorHandler } = require('./helpers');
+const { errorHandler } = require('./helpers');
 
 const articleRouter = require('./routes/articles');
 const commentRouter = require('./routes/comments');
@@ -12,11 +11,7 @@ const app = express();
 
 app.use(express.json());
 
-app.get('/articles/', asyncHandler(async (req, res) => {
-    const articles = await Article.findAll();
-
-    return res.json(articles);
-}));
+app.use(articleRouter);
 
 app.use('/article/:articleId', commentRouter);
 
