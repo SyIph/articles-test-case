@@ -19,6 +19,18 @@ const store = createStore({
             const responce = await api.get('/articles/');
 
             commit('setArticles', responce.data);
+        },
+
+        async createArticle(_, article) {
+            const responce = await api.post('/article/', article);
+
+            return responce.data;
+        },
+
+        async updateArticle(_, { id, article }) {
+            const responce = await api.patch(`/article/${id}`, article);
+
+            return responce.data;
         }
     }
 });
