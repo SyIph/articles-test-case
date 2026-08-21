@@ -5,7 +5,8 @@ const store = createStore({
     state() {
         return {
             articles: [],
-            comments: []
+            comments: [],
+            analytics: []
         };
     },
 
@@ -16,6 +17,10 @@ const store = createStore({
 
         setComments(state, comments) {
             state.comments = comments;
+        },
+
+        setAnalytics(state, analytics) {
+            state.analytics = analytics;
         }
     },
 
@@ -74,6 +79,17 @@ const store = createStore({
         async deleteComment(_, { articleId, commentId }) {
             await api.delete(`/article/${articleId}/comment/${commentId}/`);
         },
+
+        async fetchAnalytics({ commit }, { dateFrom, dateTo }) {
+            const responce = await api.get('/analytic/comments/', {
+                params: {
+                    dateFrom,
+                    dateTo
+                }
+            });
+
+            commit('setAnalytics', responce.data);
+        }
 
     }
 });
