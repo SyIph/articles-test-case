@@ -4,13 +4,18 @@ import api from "@/api/client";
 const store = createStore({
     state() {
         return {
-            articles: []
+            articles: [],
+            comments: []
         };
     },
 
     mutations: {
         setArticles(state, articles) {
             state.articles = articles;
+        },
+
+        setComments(state, comments) {
+            state.comments = comments;
         }
     },
 
@@ -41,6 +46,20 @@ const store = createStore({
 
         async deleteArticle(_, id) {
             await api.delete(`/article/${id}/`);
+        },
+
+        async fetchComments({ commit }, articleId) {
+            const responce = await api.get(`/article/${articleId}/comments`);
+            commit('setComments', responce.data);
+        },
+
+        async createComment(_, { articleId, text }) {
+            const response = await api.post(
+                `/article/${articleId}/comment/`,
+                { text }
+            );
+
+            return response.data;
         }
     }
 });
