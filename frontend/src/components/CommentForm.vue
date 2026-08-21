@@ -14,7 +14,7 @@
 
 <script setup>
 
-import { ref } from 'vue';
+import { nextTick, ref } from 'vue';
 
 const emit = defineEmits(['submit']);
 
@@ -35,6 +35,9 @@ const submit = async () => {
     emit('submit', text.value.trim());
 
     text.value = '';
+
+    await nextTick();
+
     form.value.resetValidation();
 };
 

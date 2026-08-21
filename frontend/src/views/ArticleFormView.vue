@@ -95,10 +95,12 @@ onMounted(async () => {
         return;
     }
 
-    const article = await store.dispatch(
+    await store.dispatch(
         'fetchArticle',
         route.params.id
     );
+
+    const article = store.state.article;
 
     title.value = article.title;
     text.value = article.text;

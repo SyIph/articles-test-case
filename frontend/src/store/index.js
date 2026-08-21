@@ -5,6 +5,7 @@ const store = createStore({
     state() {
         return {
             articles: [],
+            article: null,
             comments: [],
             analytics: []
         };
@@ -13,6 +14,10 @@ const store = createStore({
     mutations: {
         setArticles(state, articles) {
             state.articles = articles;
+        },
+
+        setArticle(state, article) {
+            state.article = article;
         },
 
         setComments(state, comments) {
@@ -26,27 +31,27 @@ const store = createStore({
 
     actions: {
         async fetchArticles({ commit }) {
-            const responce = await api.get('/articles/');
+            const response = await api.get('/articles/');
 
-            commit('setArticles', responce.data);
+            commit('setArticles', response.data);
         },
 
         async createArticle(_, article) {
-            const responce = await api.post('/article/', article);
+            const response = await api.post('/article/', article);
 
-            return responce.data;
+            return response.data;
         },
 
         async updateArticle(_, { id, article }) {
-            const responce = await api.patch(`/article/${id}`, article);
+            const response = await api.patch(`/article/${id}`, article);
 
-            return responce.data;
+            return response.data;
         },
 
-        async fetchArticle(_, id) {
-            const responce = await api.get(`/article/${id}/`);
+        async fetchArticle({ commit }, id) {
+            const response = await api.get(`/article/${id}/`);
 
-            return responce.data;
+            commit('setArticle', response.data);
         },
 
         async deleteArticle(_, id) {
@@ -54,8 +59,8 @@ const store = createStore({
         },
 
         async fetchComments({ commit }, articleId) {
-            const responce = await api.get(`/article/${articleId}/comments`);
-            commit('setComments', responce.data);
+            const response = await api.get(`/article/${articleId}/comments`);
+            commit('setComments', response.data);
         },
 
         async createComment(_, { articleId, text }) {
@@ -68,12 +73,12 @@ const store = createStore({
         },
 
         async updateComment(_, { articleId, commentId, text }) {
-            const responce = await api.patch(
+            const response = await api.patch(
                 `/article/${articleId}/comment/${commentId}`, 
                 { text }
             );
 
-            return responce.data;
+            return response.data;
         },
 
         async deleteComment(_, { articleId, commentId }) {
@@ -81,14 +86,14 @@ const store = createStore({
         },
 
         async fetchAnalytics({ commit }, { dateFrom, dateTo }) {
-            const responce = await api.get('/analytic/comments/', {
+            const response = await api.get('/analytic/comments/', {
                 params: {
                     dateFrom,
                     dateTo
                 }
             });
 
-            commit('setAnalytics', responce.data);
+            commit('setAnalytics', response.data);
         }
 
     }

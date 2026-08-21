@@ -65,18 +65,12 @@ const router = useRouter();
 const store = useStore();
 const comments = computed(() => store.state.comments);
 
-const article = ref(null);
+const article = computed(() => store.state.article);
 
 onMounted(async () => {
-    article.value = await store.dispatch(
-        'fetchArticle',
-        route.params.id
-    );
+    await store.dispatch('fetchArticle', route.params.id);
 
-    await store.dispatch(
-        'fetchComments',
-        route.params.id
-    );
+    await store.dispatch('fetchComments', route.params.id);
 });
 
 const remove = async () => {

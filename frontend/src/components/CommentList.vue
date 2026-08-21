@@ -91,6 +91,10 @@ const formatDate = (date) => {
     return new Date(date).toLocaleString();
 }
 
+const required = (value) => {
+    return Boolean(value?.trim()) || 'Введите текст комментария';
+};
+
 </script>
 
 <style scoped>

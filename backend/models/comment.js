@@ -13,7 +13,10 @@ module.exports = (sequelize) => {
         {
             text: {
                 type: DataTypes.TEXT,
-                allowNull: false
+                allowNull: false,
+                validate: {
+                    notEmpty: true
+                }
             },
             articleId: {
                 type: DataTypes.INTEGER,
