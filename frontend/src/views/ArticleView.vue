@@ -1,16 +1,17 @@
 <template>
     <v-container>
         <v-card v-if="article">
-            <v-card-title>{{ article.title }}</v-card-title>
-
+            <v-card-title class="article-title">{{ article.title }}</v-card-title>
+            
             <v-card-text>
+                <v-divider />
                 <p class="article-text">{{ article.text }}</p>
-
-                <div class="mt-4">
+                <v-divider />
+                <div class="mt-4 text-medium-emphasis">
                     Дата создания: {{ formatDate(article.createdAt) }}
                 </div>
 
-                <div>
+                <div class="text-medium-emphasis">
                     Последнее изменение: {{ formatDate(article.updatedAt) }}
                 </div>
             </v-card-text>
@@ -39,7 +40,11 @@
             </v-card-title>
             <v-card-text>
                 <div class="comments-list">
-                    <comment-list :comments="comments" />
+                    <comment-list 
+                    :comments="comments" 
+                    @edit="editComment"
+                    @delete="deleteComment"
+                />
                 </div>
                 <comment-form class="mt-4" @submit="addComment"/>
             </v-card-text>
@@ -96,10 +101,36 @@ const addComment = async (text) => {
     await store.dispatch('fetchComments', route.params.id);
 };
 
+const editComment = async ({ commentId, text }) => {
+    await store.dispatch('updateComment', {
+        articleId: route.params.id,
+        commentId,
+        text
+    });
+
+    await store.dispatch('fetchComments', route.params.id);
+};
+
+const deleteComment = async (commentId) => {
+    await store.dispatch('deleteComment', {
+        articleId: route.params.id,
+        commentId
+    });
+
+    await store.dispatch('fetchComments', route.params.id);
+};
+
 </script>
 
 <style scoped>
+.article-title {
+    font-size: 32px;
+    font-weight: 600;
+}
+
 .article-text {
+    font-size: 20px;
+    line-height: 1.6;
     white-space: pre-wrap;
 }
 

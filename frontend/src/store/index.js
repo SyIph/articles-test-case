@@ -60,7 +60,21 @@ const store = createStore({
             );
 
             return response.data;
-        }
+        },
+
+        async updateComment(_, { articleId, commentId, text }) {
+            const responce = await api.patch(
+                `/article/${articleId}/comment/${commentId}`, 
+                { text }
+            );
+
+            return responce.data;
+        },
+
+        async deleteComment(_, { articleId, commentId }) {
+            await api.delete(`/article/${articleId}/comment/${commentId}/`);
+        },
+
     }
 });
 

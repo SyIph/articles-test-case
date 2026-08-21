@@ -34,7 +34,10 @@ router.get('/comments/', asyncHandler(async (req, res) => {
     const comments = await Comment.findAll({
         where: {
             articleId: article.id
-        }
+        },
+        order: [
+            ['createdAt', 'ASC']
+        ]
     });
 
     return res.json(comments);

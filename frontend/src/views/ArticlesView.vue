@@ -1,6 +1,6 @@
 <template>
     <v-container>
-        <v-card>
+        <v-card variant="outlined">
             <v-card-title>Статьи</v-card-title>
 
             <v-card-actions>
@@ -9,7 +9,7 @@
                 </v-btn>
             </v-card-actions>
 
-            <v-data-table :headers="headers" :items="articles">
+            <v-data-table :headers="headers" :items="articles" hover>
                 <template #item.createdAt="{ item }">
                     {{ formatDate(item.createdAt) }}
                 </template>
@@ -30,10 +30,6 @@ import { useStore } from 'vuex';
 const store = useStore();
 
 const headers = [
-    {
-        title: 'ID',
-        key: 'id'
-    },
     {
         title: 'Название',
         key: 'title'
